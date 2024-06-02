@@ -1,0 +1,6 @@
+<div class="container" *ngIf="dashboardData$ | async as dashboardData">
+    <!-- Use dashboardData here -->
+    <h2>Welcome {{dashboardData.user.name}}</h2>
+    <p>User ID: {{ dashboardData.user.id }}</p>
+    <!-- Add more dashboard content here -->
+  </div>

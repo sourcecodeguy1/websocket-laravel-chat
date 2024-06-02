@@ -1,0 +1,39 @@
+<div class="card">
+    <div class="card-body">
+        <div class="chat-messages mb-3" style="height: 300px; overflow-y: auto;">
+            <div *ngFor="let message of messages" class="mb-2 pb-2">
+                <strong>{{ message.senderId === socketService.userId ? 'me' : userNames.get(+message.senderId) }}</strong>: {{ message.text }}
+              </div>
+        </div>
+        
+    </div>
+</div>
+<div class="container">
+    <div class="row mt-3">
+        <div class="col-9">
+            <select class="form-control" [(ngModel)]="recipientId" (ngModelChange)="onRecipientChange($event)" name="recipientId" required>
+                <option value="" disabled selected>Select a user to send a message to</option>
+                <option *ngFor="let userEntry of usersArray" [value]="userEntry[0]">{{ userEntry[1].name }}</option>
+            </select>
+        </div>
+    </div>
+
+<div class="row mt-5">
+    <form #f="ngForm" (ngSubmit)="sendMessage(f)" class="form-row align-items-center">
+        <div class="col-9">
+            <input type="text" class="form-control" [(ngModel)]="message" name="message"
+                placeholder="Type a message" required>
+        </div>
+        <div class="col-3">
+            <button class="btn btn-primary w-100 mt-5" type="submit">Send</button>
+        </div>
+    </form>
+</div>
+<div class="row mt-3" *ngIf="errorMessage">
+    <div class="col-12">
+      <div class="alert alert-danger" role="alert">
+        {{ errorMessage }}
+      </div>
+    </div>
+</div>
+</div>
