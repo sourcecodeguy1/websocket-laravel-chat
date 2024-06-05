@@ -3,6 +3,7 @@ import { SocketService } from '../../services/socket.service';
 import { NgForm } from '@angular/forms';
 import { UserService } from '../../services/user.service';
 import { User } from '../../models/user';
+import { ChatService } from '../../services/chat.service';
 
 @Component({
   selector: 'app-chat',
@@ -18,7 +19,7 @@ export class ChatComponent implements OnInit {
   errorMessage: string | null = null;
   userNames = new Map<number, string>();
 
-  constructor(public socketService: SocketService, private userService: UserService) { 
+  constructor(public socketService: SocketService, private userService: UserService, chatService: ChatService) { 
     this.recipientId = '';
   }
 
@@ -69,5 +70,14 @@ export class ChatComponent implements OnInit {
     console.log('Recipient ID changed:', newRecipientId);
     this.recipientId = newRecipientId;
     this.errorMessage = '';
+  
+    // Fetch the messages between the current user and the new recipient
+    this.chatService.getMessages(this.socketService.userId, newRecipientId)
+      .subscribe(messages => {
+        this.messages = messages;
+      }, error => {
+        console.error('Error fetching messages:', error);
+        this.errorMessage = 'Error fetching messages';
+      });
   }
 }

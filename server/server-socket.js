@@ -1,6 +1,8 @@
 import express from 'express';
 import http from 'http';
 import { Server as SocketIOServer } from 'socket.io';
+import { saveMessage } from './db.js';
+
 
 const app = express();
 const server = http.createServer(app);
@@ -24,25 +26,31 @@ io.on('connection', (socket) => {
     });
   
     // When a message is received, send it to the recipient's socket
-    socket.on('message', (message) => {
+    socket.on('message', async (message) => {
+      try {
+        // Save the message in the database
+        await saveMessage(message);
+        console.log(`Message saved to database: ${JSON.stringify(message)}`);
+    
         const recipientSocket = users[message.recipientId];
         console.log(`Recipient ID: ${message.recipientId}, Recipient Socket:`, recipientSocket);
         if (recipientSocket) {
           // Use the userIds mapping to set the senderId to the user ID, not the socket ID
           recipientSocket.emit('message', { ...message, senderId: userIds[socket.id] });
           console.log(`Message sent to: ${message.recipientId}`);  // Log the recipient's ID when a message is sent
-      
-          // If the sender is not the recipient, also emit the message to the sender's socket
-          if (message.senderId !== message.recipientId) {
-            const senderSocket = users[message.senderId];
-            if (senderSocket) {
-              senderSocket.emit('message', { ...message, senderId: userIds[socket.id] });
-            }
-          }
         } else {
           console.log(`Message received for disconnected user: ${message.recipientId}`);  // Log if a message is received for a disconnected user
         }
-      });
+    
+        // Always emit the message to the sender's socket
+        const senderSocket = users[message.senderId];
+        if (senderSocket) {
+          senderSocket.emit('message', { ...message, senderId: userIds[socket.id] });
+        }
+      } catch (err) {
+        console.error('Failed to save message:', err);
+      }
+    });
   });
 
 server.listen(3001, () => {

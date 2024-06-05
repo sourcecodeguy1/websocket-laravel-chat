@@ -14,8 +14,8 @@ export class ChatService {
     return this.http.post(url, { sender_id: senderId, recipient_id: recipientId, message }, {withCredentials: true});
   }
 
-  getMessages(): Observable<any> {
-    const url = '/api/messages';
-    return this.http.get(url);
+  getMessages(userId: string, recipientId: string): Observable<any> {
+    //const url = '/api/messages';
+    return this.http.get(`/api/messages?userId=${userId}&recipientId=${recipientId}`);
   }
 }
