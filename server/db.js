@@ -18,11 +18,12 @@ console.log(process.env.DB_PASSWORD);
 console.log(process.env.DB_DATABASE);
 
 async function saveMessage(message) {
-    const { text, recipientId, senderId } = message;
+    const { text, recipientId, senderId, created_at } = message;
     const [rows] = await pool.query('INSERT INTO messages SET ?', {
       message: text,
       recipient_id: recipientId,
-      sender_id: senderId
+      sender_id: senderId,
+      created_at: created_at
     });
     return rows;
   }

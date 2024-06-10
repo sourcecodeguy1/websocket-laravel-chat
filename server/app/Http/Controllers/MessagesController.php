@@ -20,12 +20,23 @@ class MessagesController extends Controller
         return response()->json($message, 201);
     }
 
-    public function getMessages()
-{
-    $messages = Message::join('users', 'messages.sender_id', '=', 'users.id')
-        ->select('messages.*', 'users.name as sender_name')
-        ->get();
+    public function getMessages(Request $request)
+    {
+        $userId = $request->query('userId');
+        $recipientId = $request->query('recipientId');
 
-    return response()->json($messages);
-}
+        $messages = Message::join('users', 'messages.sender_id', '=', 'users.id')
+            ->select('messages.*', 'users.name as sender_name')
+            ->where(function ($query) use ($userId, $recipientId) {
+                $query->where('sender_id', $userId)
+                    ->where('recipient_id', $recipientId);
+            })
+            ->orWhere(function ($query) use ($userId, $recipientId) {
+                $query->where('sender_id', $recipientId)
+                    ->where('recipient_id', $userId);
+            })
+            ->get();
+
+        return response()->json($messages);
+    }
 }

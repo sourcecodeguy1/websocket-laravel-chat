@@ -1,21 +1,29 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { filter, Observable, Subject } from 'rxjs';
+import { Message } from '../models/message';
+import { io } from 'socket.io-client';
+import { scan } from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http'; // Import the HttpClient module
 
 @Injectable({
   providedIn: 'root'
 })
 export class ChatService {
+  private socket;
+  private messagesSubject = new Subject<Message>();
 
-  constructor(private http: HttpClient) { }
-
-  sendMessage(senderId: string, recipientId: string, message: string): Observable<any> {
-    const url = `/api/send-message`;
-    return this.http.post(url, { sender_id: senderId, recipient_id: recipientId, message }, {withCredentials: true});
+  constructor(private http: HttpClient) { // Inject the HttpClient module
+    this.socket = io('http://host.docker.internal:3001');
+    this.socket.on('message', (message: Message) => {
+      this.messagesSubject.next(message);
+    });
   }
 
-  getMessages(userId: string, recipientId: string): Observable<any> {
-    //const url = '/api/messages';
-    return this.http.get(`/api/messages?userId=${userId}&recipientId=${recipientId}`);
+  /* sendMessage(senderId: string, recipientId: string, text: string): void {
+    this.socket.emit('message', { senderId: senderId, recipientId: recipientId, text });
+  } */
+
+  getMessages(userId: string, recipientId: string): Observable<Message[]> {
+    return this.http.get<Message[]>(`/api/messages?userId=${userId}&recipientId=${recipientId}`);
   }
 }

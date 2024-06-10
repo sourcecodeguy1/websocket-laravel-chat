@@ -10,7 +10,7 @@ export class SocketService {
   userId: string | null;
 
   constructor() {
-    this.socket = io('http://localhost:3001');
+    this.socket = io('http://host.docker.internal:3001');
     this.userId = localStorage.getItem('user_id');  // Retrieve userId from local storage
     if (this.userId) {
       this.connectUser(this.userId);
@@ -31,7 +31,7 @@ export class SocketService {
     });
   }
 
-  sendMessage(message: { text: string; recipientId: string; senderId: string }): void {
+  sendMessage(message: { text: string; recipientId: string; senderId: string, created_at: string }): void {
     console.log(`Sending message with senderId: ${this.userId}`);
     this.socket.emit('message', message);
   }

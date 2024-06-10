@@ -27,6 +27,7 @@ io.on('connection', (socket) => {
   
     // When a message is received, send it to the recipient's socket
     socket.on('message', async (message) => {
+      console.log(message);
       try {
         // Save the message in the database
         await saveMessage(message);

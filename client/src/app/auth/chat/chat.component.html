@@ -2,7 +2,7 @@
     <div class="card-body">
         <div class="chat-messages mb-3" style="height: 300px; overflow-y: auto;">
             <div *ngFor="let message of messages" class="mb-2 pb-2">
-                <strong>{{ message.senderId === socketService.userId ? 'me' : userNames.get(+message.senderId) }}</strong>: {{ message.text }}
+                <strong>{{ socketService && socketService.userId !== null && +message.sender_id === +socketService.userId ? 'me' : userNames.get(+message.sender_id) }}</strong>: {{ message.message }}
               </div>
         </div>
         
