@@ -11,21 +11,15 @@ const pool = mysql.createPool({
   database: process.env.DB_DATABASE,
 });
 
-console.log(process.env.DB_HOST);
-console.log(process.env.DB_PORT); 
-console.log(process.env.DB_USERNAME); 
-console.log(process.env.DB_PASSWORD); 
-console.log(process.env.DB_DATABASE);
-
 async function saveMessage(message) {
-    const { text, recipientId, senderId, created_at } = message;
-    const [rows] = await pool.query('INSERT INTO messages SET ?', {
-      message: text,
-      recipient_id: recipientId,
-      sender_id: senderId,
-      created_at: created_at
-    });
-    return rows;
-  }
+  const { text, recipientId, senderId } = message;
+  const [rows] = await pool.query('INSERT INTO messages (message, recipient_id, sender_id, created_at) VALUES (?, ?, ?, NOW())', [
+    text,
+    recipientId,
+    senderId
+  ]);
+  return rows;
+}
+
 
 export { saveMessage };

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Message;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class MessagesController extends Controller
 {
@@ -14,6 +15,8 @@ class MessagesController extends Controller
             'recipient_id' => 'required',
             'message' => 'required',
         ]);
+
+        Log::info('Data being inserted:', $validated);
 
         $message = Message::create($validated);
 
@@ -35,6 +38,7 @@ class MessagesController extends Controller
                 $query->where('sender_id', $recipientId)
                     ->where('recipient_id', $userId);
             })
+            ->orderBy('created_at', 'desc') // Order by created_at in descending order
             ->get();
 
         return response()->json($messages);

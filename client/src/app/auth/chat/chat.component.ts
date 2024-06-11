@@ -81,8 +81,7 @@ export class ChatComponent implements OnInit {
       const message = { 
         text: this.message, 
         recipientId: this.recipientId, 
-        senderId: this.socketService.userId ,
-        created_at: new Date().toISOString()
+        senderId: this.socketService.userId
       };
       this.socketService.sendMessage(message);
       console.log('Sent message:', message);

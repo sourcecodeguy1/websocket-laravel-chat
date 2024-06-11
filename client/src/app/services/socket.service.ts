@@ -31,7 +31,7 @@ export class SocketService {
     });
   }
 
-  sendMessage(message: { text: string; recipientId: string; senderId: string, created_at: string }): void {
+  sendMessage(message: { text: string; recipientId: string; senderId: string }): void {
     console.log(`Sending message with senderId: ${this.userId}`);
     this.socket.emit('message', message);
   }
