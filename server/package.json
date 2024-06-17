@@ -4,7 +4,8 @@
     "scripts": {
         "dev": "vite",
         "build": "vite build",
-        "start": "nodemon server-socket.js"
+        "start": "nodemon server-socket.js",
+        "production": "vite build"
     },
     "devDependencies": {
         "axios": "^1.6.4",

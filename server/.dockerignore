@@ -1,0 +1,26 @@
+# Laravel-specific files and directories
+.env
+node_modules
+vendor
+storage
+public/storage
+
+# Version control files
+.git
+
+# Log files
+*.log
+
+# IDE and editor configuration files
+.idea
+.vscode
+
+# Docker-related files
+.dockerignore
+Dockerfile
+
+# Temporary files and directories
+*.tmp
+*.bak
+*.swp
+*.swo

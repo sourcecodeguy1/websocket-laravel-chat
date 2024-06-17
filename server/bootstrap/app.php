@@ -19,4 +19,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->renderable(function (NotFoundHttpException $e) {
             return response()->json(['message' => 'Object not found'], 404);
         });
-    })->create();
+    })
+    ->withCommands([
+        \App\Console\Commands\LogViewPaths::class,
+    ])
+    ->create();

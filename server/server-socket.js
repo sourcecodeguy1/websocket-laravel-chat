@@ -2,13 +2,17 @@ import express from 'express';
 import http from 'http';
 import { Server as SocketIOServer } from 'socket.io';
 import { saveMessage } from './db.js';
+import dotenv from 'dotenv';
+
+// Load environment variables from .env file
+dotenv.config();
 
 
 const app = express();
 const server = http.createServer(app);
 const io = new SocketIOServer(server, {
   cors: {
-    origin: "http://localhost:4300",
+    origin: process.env.ORIGIN,
     methods: ["GET", "POST"]
   }
 });
@@ -54,6 +58,6 @@ io.on('connection', (socket) => {
     });
   });
 
-server.listen(3001, () => {
-  console.log('listening on 3001');
+server.listen(3002, () => {
+  console.log('listening on 3002');
 });

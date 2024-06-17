@@ -19,7 +19,7 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['http://localhost:4300'],
+    'allowed_origins' => [env('ORIGIN')],
 
     'allowed_origins_patterns' => [],
 
