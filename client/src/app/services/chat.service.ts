@@ -13,7 +13,7 @@ export class ChatService {
   private messagesSubject = new Subject<Message>();
 
   constructor(private http: HttpClient) { // Inject the HttpClient module
-    this.socket = io('http://host.docker.internal:3001');
+    this.socket = io('http://host.docker.internal:3002');
     this.socket.on('message', (message: Message) => {
       this.messagesSubject.next(message);
     });

@@ -10,7 +10,7 @@ export class AuthService {
   constructor(private http: HttpClient) {}
 
   initializeApp(): Observable<any> {
-    return this.http.get('/sanctum/csrf-cookie');
+    return this.http.get('/sanctum/csrf-cookie', { responseType: 'text' });
   }
 
   logout() {

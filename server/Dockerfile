@@ -62,6 +62,12 @@ COPY init-laravel.sh /usr/local/bin/init-laravel.sh
 # Make the initialization script executable
 RUN chmod +x /usr/local/bin/init-laravel.sh
 
+# Create the storage directories with correct permissions
+RUN mkdir -p /var/www/html/storage/framework/{sessions,views,cache} && \
+    chmod -R 775 /var/www/html/storage && \
+    chown -R www-data:www-data /var/www/html/storage
+
+
 # Expose ports
 EXPOSE 9000
 EXPOSE 3002

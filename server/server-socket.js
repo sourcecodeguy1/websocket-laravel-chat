@@ -7,7 +7,7 @@ import dotenv from 'dotenv';
 // Load environment variables from .env file
 dotenv.config();
 
-
+const PORT = process.env.SERVER_SOCKET_PORT;
 const app = express();
 const server = http.createServer(app);
 const io = new SocketIOServer(server, {
@@ -28,7 +28,7 @@ io.on('connection', (socket) => {
       console.log(`UserIds: ${JSON.stringify(userIds)}`);
       console.log(`User connected: ${userId}`);  // Log the user's ID when they connect
     });
-  
+
     // When a message is received, send it to the recipient's socket
     socket.on('message', async (message) => {
       console.log(message);
@@ -36,7 +36,7 @@ io.on('connection', (socket) => {
         // Save the message in the database
         await saveMessage(message);
         console.log(`Message saved to database: ${JSON.stringify(message)}`);
-    
+
         const recipientSocket = users[message.recipientId];
         console.log(`Recipient ID: ${message.recipientId}, Recipient Socket:`, recipientSocket);
         if (recipientSocket) {
@@ -46,7 +46,7 @@ io.on('connection', (socket) => {
         } else {
           console.log(`Message received for disconnected user: ${message.recipientId}`);  // Log if a message is received for a disconnected user
         }
-    
+
         // Always emit the message to the sender's socket
         const senderSocket = users[message.senderId];
         if (senderSocket) {
@@ -58,6 +58,6 @@ io.on('connection', (socket) => {
     });
   });
 
-server.listen(3002, () => {
-  console.log('listening on 3002');
+server.listen(PORT, () => {
+  console.log('listening on port ' + PORT);
 });

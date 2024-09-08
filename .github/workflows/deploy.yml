@@ -1,0 +1,67 @@
+name: Build and Push to Docker Hub
+
+on:
+  push:
+    branches:
+      - master # Replace with your main branch name
+
+jobs:
+  build-and-push-client:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build Angular client image
+        working-directory: ./client
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/${{ secrets.CLIENT_IMAGE }}:prod .
+
+      - name: Push Angular client image
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.CLIENT_IMAGE }}:prod
+
+  build-and-push-server:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build Laravel server image
+        working-directory: ./server
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/${{ secrets.SERVER_IMAGE }}:prod .
+
+      - name: Push Laravel server image
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.SERVER_IMAGE }}:prod
+
+  deploy-to-vultr:
+    runs-on: ubuntu-latest
+    needs: [build-and-push-client, build-and-push-server]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Deploy to Vultr
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.VULTR_HOST }}
+          username: ${{ secrets.VULTR_USERNAME }}
+          key: ${{ secrets.VULTR_SSH_KEY }}
+          script_stop: true
+          script: |
+            cd ${{ secrets.DIRECTORY }}
+            docker-compose down
+            docker-compose pull
+            docker-compose up --build -d
