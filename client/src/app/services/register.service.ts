@@ -7,10 +7,11 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class RegisterService {
+  private apiUrl = 'https://laravel-server.juliowebmaster.com/api';
 
   constructor(private http: HttpClient) { }
 
   register(user: User): Observable<any> {
-    return this.http.post<any>('/api/register', user);
+    return this.http.post<any>(`${this.apiUrl}/register`, user);
   }
 }
